@@ -5,20 +5,26 @@ import ConfigParser
 import ted
 import cosm
 import time
+import daemon
 
 TEDCONFIG="/etc/ted.conf"
 
-config = ConfigParser.ConfigParser()
-config.read(TEDCONFIG)
+def main():
+      config = ConfigParser.ConfigParser()
+      config.read(TEDCONFIG)
 
-t = ted.Ted(config.get("DEVICE","HOST"))
+      t = ted.Ted(config.get("DEVICE","HOST"))
+      
+      while True:
+            t.update()
+            c = cosm.Cosm(config.get("CREDENTIALS","FEED"),
+                          config.get("CREDENTIALS","KEY"))
+            c.addDatapoint("Watts",t.getWatts())
+            c.addDatapoint("Volts",t.getVolts())
+            c.buildUpdate()
+            c.sendUpdate()
+            time.sleep(30)
 
-while True:
-      t.update()
-      c = cosm.Cosm(config.get("CREDENTIALS","FEED"),
-                    config.get("CREDENTIALS","KEY"))
-      c.addDatapoint("Watts",t.getWatts())
-      c.addDatapoint("Volts",t.getVolts())
-      c.buildUpdate()
-      c.sendUpdate()
-      time.sleep(30)
+
+with daemon.DaemonContext():
+      main()
