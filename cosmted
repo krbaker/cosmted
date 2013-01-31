@@ -16,14 +16,17 @@ def main():
       t = ted.Ted(config.get("DEVICE","HOST"))
       
       while True:
-            t.update()
-            c = cosm.Cosm(config.get("CREDENTIALS","FEED"),
-                          config.get("CREDENTIALS","KEY"))
-            c.addDatapoint("Watts",t.getWatts())
-            c.addDatapoint("Volts",t.getVolts())
-            c.buildUpdate()
-            c.sendUpdate()
-            time.sleep(30)
+            try:
+                  t.update()
+                  c = cosm.Cosm(config.get("CREDENTIALS","FEED"),
+                                config.get("CREDENTIALS","KEY"))
+                  c.addDatapoint("Watts",t.getWatts())
+                  c.addDatapoint("Volts",t.getVolts())
+                  c.buildUpdate()
+                  c.sendUpdate()
+                  time.sleep(30)
+            except Exception:
+                  pass
 
 
 with daemon.DaemonContext():
