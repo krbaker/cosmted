@@ -1,0 +1,23 @@
+#!/usr/bin/python
+import ConfigParser
+import ted
+import cosm
+import time
+
+TEDCONFIG="/etc/ted.conf"
+
+config = ConfigParser.ConfigParser()
+config.read(TEDCONFIG)
+
+c = cosm.Cosm(config.get("CREDENTIALS","FEED"),
+              config.get("CREDENTIALS","KEY"))
+
+t = ted.Ted(config.get("DEVICE","HOST"))
+
+while True:
+      t.update()
+      c.addDatapoint("Watts",t.getWatts())
+      c.addDatapoint("Volts",t.getVolts())
+      c.buildUpdate()
+      c.sendUpdate()
+      time.sleep(30)
