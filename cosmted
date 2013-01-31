@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #Simple script to push ted data to cosm
-#$Id$
+# $Id$
 import ConfigParser
 import ted
 import cosm
